@@ -1,0 +1,27 @@
+{
+  "name": "blogger---sequelize",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/DCXan/Blog-2.0.git"
+  },
+  "author": "David Chen",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/DCXan/Blog-2.0/issues"
+  },
+  "homepage": "https://github.com/DCXan/Blog-2.0#readme",
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "express": "^4.18.1",
+    "express-session": "^1.17.3",
+    "mustache-express": "^1.3.2",
+    "pg": "^8.7.3",
+    "sequelize": "^6.21.0"
+  }
+}
