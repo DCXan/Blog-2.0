@@ -1,0 +1,48 @@
+<html lang="en">
+<head>
+    <link rel = "stylesheet" href = "/css/style.css"/>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blogger - Posts</title>
+</head>
+<body>
+    <div class="main-section">
+        <form method="POST" action="/account/logout">
+            {{#activeUser}}
+            <p>
+                Logged in as: {{activeUser}}
+            </p>
+            {{/activeUser}}
+            <button>Log out</button>
+          </form>
+    <h1>Blog Posts</h1>
+    <form method="GET" action="/posts/create">
+        <button>Create new Blog post</button>
+    </form>
+    <ul>
+    {{#posts}}
+
+        <li>
+            <h3>{{title}}</h3>
+            <p>
+                <small>Author: {{author}}<br>Created on: {{date_created}}<br>Last updated on: {{date_updated}}
+                </small>
+            </p>
+            <p>{{body}}</p>
+
+        <form method = 'POST' action = '/posts/update/{{post_id}}'>
+            <button>Edit Post</button>
+        </form>
+
+        <form method = 'POST' action = '/posts/delete'>
+            <input type="hidden" value = '{{post_id}}' name="postID"/>
+            <button>Delete Post</button>
+        </li>
+        </form>
+
+    {{/posts}}
+    </ul>
+    </div>
+</body>
+</html>
