@@ -1,6 +1,7 @@
 const express = require('express')
 const app = express()
 
+global.models = require('./models')
 const authenticationMW = require('./middleware/authenticate')
 
 app.use(express.urlencoded({extended: true}))
@@ -40,4 +41,8 @@ app.listen(port, () => {
 
 app.get('/', (req, res) => {
     res.render('home')
+})
+
+app.get('/error', (req, res) => {
+    res.render('error')
 })

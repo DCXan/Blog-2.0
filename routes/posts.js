@@ -1,69 +1,126 @@
-const express = require('express')
-const postRouter = express.Router()
+const express = require("express");
+const postRouter = express.Router();
 
-postRouter.get('/', async (req, res) => {
+postRouter.get("/", async (req, res) => {
+  const activeUser = req.session.username;
 
-    const activeUser = req.session.username
+  try {
+    const posts = await models.Post.findAll({
+      order: [["createdAt", "DESC"]],
+    });
 
-    //const posts = await models.Movi
+    res.render("index", { posts: posts, activeUser });
+  } catch {
+    res.redirect("/error");
+  }
+});
 
-    // get all the posts from the database 
-    
-    // db.any('SELECT post_id, title, body, date_created, date_updated, is_published, author, author_id FROM posts ORDER BY date_created DESC')
-    // .then(posts => {
-        res.render('index', {posts: posts, activeUser})
-    // }).catch(error => {
-        
-    //     console.log(error)
-    // })
-})
+postRouter.post("/create", (req, res) => {
+  const userID = req.session.userID;
+  const activeUser = req.session.username;
+  const title = req.body.title;
+  const body = req.body.body;
+  const category = "other"; //change this later to dropdown
 
-postRouter.post('/create', (req, res) => {
-    const userID = req.session.userID
-    const activeUser = req.session.username
-    const title = req.body.title
-    const post = req.body.body
+  // Create post object
 
-    // db.none('INSERT INTO posts (title, body, author, author_id) VALUES ($1, $2, $3, $4)', [title, post, activeUser, userID])
-    // .then(() => {
-    //     res.redirect('/posts')
-    // }).catch(error => {
-    //     res.render('index', {message: 'Unable to post!'})
-    // })
-})
+  const post = models.Post.build({
+    title: title,
+    body: body,
+    category: category,
+    author: activeUser,
+    authorID: userID,
+  });
 
-postRouter.get('/create', (req, res) => {
-    res.render('new-post')
-})
+  // Save post to table
 
-postRouter.post('/delete', (req, res) => {
-    console.log(req.body.postID)
-    const id = req.body.postID
-    
-    // db.none('DELETE FROM posts WHERE post_id = ($1)', [id])
+  post.save().then((savedPost) => {
+    res.redirect("/posts");
+  });
+});
 
+postRouter.get("/create", (req, res) => {
+  res.render("new-post");
+});
 
-    res.redirect('/posts')
-})
+//////// Create delete BUTTON /////////
 
-postRouter.post('/update/:postID', (req, res) => {
-    const id = req.params.postID
+// postRouter.post('/delete', async (req, res) => {
 
-    // db.one('SELECT post_id, title, body, date_updated, is_published FROM posts WHERE post_id = ($1)', [id])
-    // .then(post => {
-    //     res.render('update-post', {post})
-    // })
-})
+//     const id = req.body.postID
 
-postRouter.post('/update', (req, res) => {
-    const id = req.body.postID
-    const title = req.body.title
-    const post = req.body.body
+//     try {
+//         const deletedPost = await models.Post.destroy({
+//             where: {
+//                 id: id
+//             }
+//         })
+//     } catch {
+//         res.redirect('/error')
+//     }
 
-    // db.none('UPDATE posts SET title = ($1), body = ($2), date_updated = current_timestamp WHERE post_id = ($3)', [title, post, id])
-    
-    // res.redirect('/posts')
-    
-})
+//     res.redirect('/posts')
+// })
 
-module.exports = postRouter
+// Create delete LINK
+
+postRouter.get("/delete/:postID", async (req, res) => {
+  const id = req.params.postID;
+
+  try {
+    const deletedPost = await models.Post.destroy({
+      where: {
+        id: id,
+      },
+    });
+  } catch {
+    res.redirect("/error");
+  }
+
+  res.redirect("/posts");
+});
+
+//////// Create edit BUTTON ////////
+
+// postRouter.post('/update/:postID', async (req, res) => {
+
+//     const id = req.params.postID
+
+//     const post = await models.Post.findByPk(id)
+
+//     res.render('update-post', {post})
+// })
+
+// Create edit LINK
+
+postRouter.get("/update/:postID", async (req, res) => {
+  const id = req.params.postID;
+
+  const post = await models.Post.findByPk(id);
+
+  res.render("update-post", { post });
+});
+
+// Allow user to update post
+
+postRouter.post("/update", async (req, res) => {
+  const id = req.body.postID;
+  const title = req.body.title;
+  const body = req.body.body;
+
+  const updatedPost = await models.Post.update(
+    {
+      title: title,
+      body: body,
+    },
+    {
+      where: {
+        id: id,
+      },
+    }
+  );
+
+  res.redirect("/posts");
+});
+
+module.exports = postRouter;

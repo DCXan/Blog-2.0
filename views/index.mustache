@@ -1,48 +1,49 @@
 <html lang="en">
-<head>
-    <link rel = "stylesheet" href = "/css/style.css"/>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <link rel="stylesheet" href="/css/style.css" />
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Blogger - Posts</title>
-</head>
-<body>
+  </head>
+  <body>
     <div class="main-section">
-        <form method="POST" action="/account/logout">
-            {{#activeUser}}
-            <p>
-                Logged in as: {{activeUser}}
-            </p>
-            {{/activeUser}}
-            <button>Log out</button>
-          </form>
-    <h1>Blog Posts</h1>
-    <form method="GET" action="/posts/create">
+      <form method="POST" action="/account/logout">
+        {{#activeUser}}
+        <p>Logged in as: {{ activeUser }}</p>
+        {{/activeUser}}
+        <button>Log out</button>
+      </form>
+      <h1>Blog Posts</h1>
+      <form method="GET" action="/posts/create">
         <button>Create new Blog post</button>
-    </form>
-    <ul>
-    {{#posts}}
+      </form>
+      <ul>
+        {{#posts}}
 
         <li>
-            <h3>{{title}}</h3>
-            <p>
-                <small>Author: {{author}}<br>Created on: {{date_created}}<br>Last updated on: {{date_updated}}
-                </small>
-            </p>
-            <p>{{body}}</p>
-
-        <form method = 'POST' action = '/posts/update/{{post_id}}'>
+          <h3>{{ title }}</h3>
+          <p>
+            <small
+              >Author: {{ author }}<br />Created on: {{ createdAt }}<br />Last
+              updated on: {{ updatedAt }}
+            </small>
+          </p>
+          <p>{{ body }}</p>
+          <div class="modify-box">
+          <!--<form method="POST" action="/posts/update/{{ id }}">
             <button>Edit Post</button>
-        </form>
-
-        <form method = 'POST' action = '/posts/delete'>
-            <input type="hidden" value = '{{post_id}}' name="postID"/>
+          </form> -->
+          <a href="/posts/update/{{ id }}">Edit Post</a>
+          <!--<form method="POST" action="/posts/delete">
+            <input type="hidden" value="{{ id }}" name="postID" />
             <button>Delete Post</button>
+          </form> -->
+          <a href="/posts/delete/{{ id }}">Delete Post</a>
+          </div>
         </li>
-        </form>
-
-    {{/posts}}
-    </ul>
+        {{/posts}}
+      </ul>
     </div>
-</body>
+  </body>
 </html>
