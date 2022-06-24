@@ -20,34 +20,39 @@ accountRouter.get("/register", (req, res) => {
 
 // Allow user to register by submitting a desired username and password
 
-accountRouter.post("/register", (req, res) => {
+accountRouter.post("/register", async (req, res) => {
   const username = req.body.username;
   const password = req.body.password;
 
   // Check database to see if username already exists. If username exists return user to registration page and display error message
 
-//   db.oneOrNone("SELECT id FROM users WHERE username = $1", [username]).then(
-//     (user) => {
-//       if (user) {
-//         res.render("register", {
-//           message: "Username is taken. Please choose a different username.",
-//         });
-//       } else {
-        // If username is available (doesn't already exist in DB, then take the desired password and hash it before creating DB entry)
+  // CHECK ON HOW TO IMPLEMENT WITH FIND OR CREATE
+  // const [user, created] = await models.User.findOrCreate({
+  //   where: {username: username},
+  //   defaults: {password: password}
+  // })
 
-//         bcrypt.genSalt(10).then((salt) => {
-//           bcrypt.hash(password, salt).then((hash) => {
-//             db.none("INSERT INTO users (username, password) VALUES ($1, $2)", [
-//               username,
-//               hash,
-//             ]).then(() => {
-//               res.redirect("/account/login?success=true");
-//             });
-//           });
-//         });
-//       }
-//     }
-//   );
+  const user = await models.User.findOne({
+    where: { username: username },
+  });
+
+  if (user != null) {
+    res.render("register", {
+      message: "Username is taken. Please choose a different one.",
+    });
+  } else {
+    bcrypt.genSalt(10).then((salt) => {
+      bcrypt.hash(password, salt).then((hash) => {
+        const user = models.User.build({
+          username: username,
+          password: hash,
+        });
+        user.save().then((savedUser) => {
+          res.render("login", { message: "Account registration successful!" });
+        });
+      });
+    });
+  }
 });
 
 // Allow user to log in with valid credentials in users DB.
@@ -58,41 +63,41 @@ accountRouter.post("/login", (req, res) => {
 
   // Search users DB for an existing username/pw combo. If combo doesn't exist, return to login and display message.
 
-//   if (username.length == 0 || password.length == 0) {
-//     return;
-//   } else {
-//     db.oneOrNone(
-//       "SELECT id, username, password FROM users WHERE username = $1",
-//       [username]
-//     ).then((user) => {
-//       if (!user) {
-//         res.render("login", {
-//           errorMessage: "Invalid username and/or password.",
-//         });
-//       } else {
-//         bcrypt
-//           .compare(password, user.password)
-//           .then((passwordsEqual) => {
-//             if (passwordsEqual) {
-//               if (req.session) {
-//                 req.session.userID = user.id;
-//                 req.session.username = user.username
-//               }
-//               res.redirect("/posts");
-//             } else {
-//               res.render("login", {
-//                 errorMessage: "Invalid username and/or password.",
-//               });
-//             }
-//           })
-//           .catch((error) => {
-//             res.render("login", {
-//               errorMessage: "Invalid username and/or password.",
-//             });
-//           });
-//       }
-//     });
-//   }
+  //   if (username.length == 0 || password.length == 0) {
+  //     return;
+  //   } else {
+  //     db.oneOrNone(
+  //       "SELECT id, username, password FROM users WHERE username = $1",
+  //       [username]
+  //     ).then((user) => {
+  //       if (!user) {
+  //         res.render("login", {
+  //           errorMessage: "Invalid username and/or password.",
+  //         });
+  //       } else {
+  //         bcrypt
+  //           .compare(password, user.password)
+  //           .then((passwordsEqual) => {
+  //             if (passwordsEqual) {
+  //               if (req.session) {
+  //                 req.session.userID = user.id;
+  //                 req.session.username = user.username
+  //               }
+  //               res.redirect("/posts");
+  //             } else {
+  //               res.render("login", {
+  //                 errorMessage: "Invalid username and/or password.",
+  //               });
+  //             }
+  //           })
+  //           .catch((error) => {
+  //             res.render("login", {
+  //               errorMessage: "Invalid username and/or password.",
+  //             });
+  //           });
+  //       }
+  //     });
+  //   }
 });
 
 accountRouter.post("/logout", (req, res) => {
