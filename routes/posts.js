@@ -1,26 +1,55 @@
 const express = require("express");
 const postRouter = express.Router();
 
+// Display all published posts
+
 postRouter.get("/", async (req, res) => {
   const activeUser = req.session.username;
 
   try {
     const posts = await models.Post.findAll({
+      where: {isPublished: true},
       order: [["createdAt", "DESC"]],
     });
 
-    res.render("index", { posts: posts, activeUser });
+    res.render("all-posts", { posts: posts, activeUser });
   } catch {
     res.redirect("/error");
   }
 });
+
+//Display posts from user only
+
+postRouter.get("/my-posts", async (req, res) => {
+
+  const activeUser = req.session.username;
+  const id = req.session.userID
+
+  try {
+    const posts = await models.Post.findAll({
+      where: {authorID: id},
+      order: [["createdAt", "DESC"]],
+    });
+
+    res.render("my-posts", { posts: posts, activeUser });
+  } catch {
+    res.redirect("/error");
+  }
+});
+
+// Create new post
 
 postRouter.post("/create", (req, res) => {
   const userID = req.session.userID;
   const activeUser = req.session.username;
   const title = req.body.title;
   const body = req.body.body;
-  const category = "other"; //change this later to dropdown
+  const category = req.body.category
+  let status = true
+
+  if (req.body.publishStatus == 'private') {
+    status = false
+  }
 
   // Create post object
 
@@ -30,6 +59,7 @@ postRouter.post("/create", (req, res) => {
     category: category,
     author: activeUser,
     authorID: userID,
+    isPublished: status
   });
 
   // Save post to table
@@ -77,7 +107,7 @@ postRouter.get("/delete/:postID", async (req, res) => {
     res.redirect("/error");
   }
 
-  res.redirect("/posts");
+  res.redirect("/posts/my-posts");
 });
 
 //////// Create edit BUTTON ////////
@@ -104,18 +134,26 @@ postRouter.get("/update/:postID", async (req, res) => {
 // Allow user to update post
 
 postRouter.post("/update", async (req, res) => {
-  const id = req.body.postID;
+  const postID = req.body.postID;
   const title = req.body.title;
   const body = req.body.body;
+  const category = req.body.category
+  let status = true
 
+  if (req.body.publishStatus == 'private') {
+    status = false
+  }
+  
   const updatedPost = await models.Post.update(
     {
       title: title,
       body: body,
+      category: category,
+      isPublished: status
     },
     {
       where: {
-        id: id,
+        id: postID,
       },
     }
   );

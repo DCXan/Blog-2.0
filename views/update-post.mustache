@@ -12,11 +12,23 @@
         <button>Log out</button>
       </form>
       <h1>Update Blog Post</h1>
-      <a href="/posts">View all Posts</a>
+      <a href="/posts">View All Posts</a>
+      <a href="/posts/my-posts">View My Posts</a>
 
       <div class="secondary-section">
         <form method="POST" action="/posts/update">
           {{#post}}
+          <div>
+            <label for="category">Category</label>
+            <select name="category" id="category">
+              <option value="General">General</option>
+              <option value="Python">Python</option>
+              <option value="JavaScript">JavaScript</option>
+              <option value="iOS">iOS</option>
+              <option value="Android">Android</option>
+              <option value="Other">Other</option>
+            </select>
+          </div>
           <div>
             <label>Post Title:</label>
             <input type="text" value="{{ title }}" name="title" />
@@ -26,7 +38,24 @@
             <label>Post Body:</label>
             <input type="text" value="{{ body }}" name="body" />
           </div>
-
+          <div>
+            <label>Public / Private</label>
+            <input
+              type="radio"
+              name="publishStatus"
+              id="public"
+              value="public"
+              checked="checked"
+            />
+            <label for="public">Public</label>
+            <input
+              type="radio"
+              name="publishStatus"
+              id="private"
+              value="private"
+            />
+            <label for="public">Private</label>
+          </div>
           <input type="hidden" value="{{ id }}" name="postID" />
           <button>Update Post</button>
           {{/post}}

@@ -1,0 +1,50 @@
+<html lang="en">
+  <head>
+    <link rel="stylesheet" href="/css/style.css" />
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Blogger - My Posts</title>
+  </head>
+  <body>
+    <div class="main-section">
+      <form method="POST" action="/account/logout">
+        {{#activeUser}}
+        <p>Logged in as: {{ activeUser }}</p>
+        {{/activeUser}}
+        <button>Log out</button>
+      </form>
+      <h1> My Blog Posts</h1>
+      <a href="/posts">View All Posts</a>
+      <form method="GET" action="/posts/create">
+        <button>Create new Blog post</button>
+      </form>
+      <ul>
+        {{#posts}}
+
+        <li>
+          <h3>{{ title }}</h3>
+          <p>
+            <small
+              >Category: {{ category }}<br />Created on: {{ createdAt }}<br />Last
+              updated on: {{ updatedAt }}<br>Is Public: {{isPublished}}
+            </small>
+          </p>
+          <p>{{ body }}</p>
+          <div class="modify-box">
+          <!--<form method="POST" action="/posts/update/{{ id }}">
+            <button>Edit Post</button>
+          </form> -->
+          <a href="/posts/update/{{ id }}">Edit Post</a>
+          <!--<form method="POST" action="/posts/delete">
+            <input type="hidden" value="{{ id }}" name="postID" />
+            <button>Delete Post</button>
+          </form> -->
+          <a href="/posts/delete/{{ id }}">Delete Post</a>
+          </div>
+        </li>
+        {{/posts}}
+      </ul>
+    </div>
+  </body>
+</html>

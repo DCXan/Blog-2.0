@@ -16,14 +16,33 @@
 
     <div class="secondary-section">
     <form method = "POST" action="/posts/create">
-    <div>
-        <label>Post Title:</label>
-        <input type="text" placeholder="Title" name="title">
-    </div>
+        <div>
+            <label for="category">Category</label>
+            <select name="category" id="category">
+                <option value="General">General</option>
+                <option value="Python">Python</option>
+                <option value="JavaScript">JavaScript</option>
+                <option value="iOS">iOS</option>
+                <option value="Android">Android</option>
+                <option value="Other">Other</option>
+              </select>
+        </div>
 
     <div>
-        <label>Post Body:</label>
+        <label>Title:</label>
+        <input type="text" placeholder="Title" name="title">
+    </div>
+    
+    <div>
+        <label>Content:</label>
         <input type="text" placeholder="Start typing here..." name="body">
+    </div>
+    <div>
+        <label>Public / Private</label>
+        <input type="radio" name="publishStatus" id = "public" value="public" checked = "checked">
+        <label for="public">Public</label>
+        <input type="radio" name="publishStatus" id = "private" value="private">
+        <label for="public">Private</label>
     </div>
     <button>Create Post</button>
     </form>

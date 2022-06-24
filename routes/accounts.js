@@ -57,47 +57,44 @@ accountRouter.post("/register", async (req, res) => {
 
 // Allow user to log in with valid credentials in users DB.
 
-accountRouter.post("/login", (req, res) => {
+accountRouter.post("/login", async (req, res) => {
   const username = req.body.username;
   const password = req.body.password;
 
   // Search users DB for an existing username/pw combo. If combo doesn't exist, return to login and display message.
 
-  //   if (username.length == 0 || password.length == 0) {
-  //     return;
-  //   } else {
-  //     db.oneOrNone(
-  //       "SELECT id, username, password FROM users WHERE username = $1",
-  //       [username]
-  //     ).then((user) => {
-  //       if (!user) {
-  //         res.render("login", {
-  //           errorMessage: "Invalid username and/or password.",
-  //         });
-  //       } else {
-  //         bcrypt
-  //           .compare(password, user.password)
-  //           .then((passwordsEqual) => {
-  //             if (passwordsEqual) {
-  //               if (req.session) {
-  //                 req.session.userID = user.id;
-  //                 req.session.username = user.username
-  //               }
-  //               res.redirect("/posts");
-  //             } else {
-  //               res.render("login", {
-  //                 errorMessage: "Invalid username and/or password.",
-  //               });
-  //             }
-  //           })
-  //           .catch((error) => {
-  //             res.render("login", {
-  //               errorMessage: "Invalid username and/or password.",
-  //             });
-  //           });
-  //       }
-  //     });
-  //   }
+  if (username.length == 0 || password.length == 0) {
+    return;
+  } else {
+    const user = await models.User.findOne({
+      where: { username: username },
+    });
+
+    if (user == null) {
+      res.render("login", { message: "Invalid username and/or password." });
+    } else {
+      bcrypt
+        .compare(password, user.password)
+        .then((passwordsEqual) => {
+          if (passwordsEqual) {
+            if (req.session) {
+              req.session.userID = user.id;
+              req.session.username = user.username;
+            }
+            res.redirect("/posts");
+          } else {
+            res.render("login", {
+              errorMessage: "Invalid username and/or password.",
+            });
+          }
+        })
+        .catch((error) => {
+          res.render("login", {
+            errorMessage: "Invalid username and/or password.",
+          });
+        });
+    }
+  }
 });
 
 accountRouter.post("/logout", (req, res) => {

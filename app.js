@@ -21,7 +21,7 @@ const accountRouter = require('./routes/accounts')
 app.use('/account', accountRouter)
 
 const postRouter = require('./routes/posts')
-app.use('/posts', postRouter) //authenticationMW
+app.use('/posts', authenticationMW, postRouter)
 
 const mustacheExpress = require('mustache-express')
 
